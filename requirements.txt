@@ -1,6 +1,6 @@
 streamlit
 yt-dlp
-moviepy
 pydub
-imageio[ffmpeg]
+speechrecognition
+ffmpeg
 
