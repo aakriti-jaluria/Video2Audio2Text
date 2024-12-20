@@ -1,6 +1,6 @@
 streamlit
 yt-dlp
-pydub
 moviepy
+pydub
 imageio[ffmpeg]
 
