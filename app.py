@@ -1,8 +1,8 @@
 import streamlit as st
-import moviepy.editor as mp
 import speech_recognition as sr
-from pydub import AudioSegment
 import os
+import subprocess
+from pydub import AudioSegment
 
 # Custom CSS for styling the UI
 st.markdown("""
@@ -48,22 +48,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Function to extract audio from video
+# Function to extract audio from video using ffmpeg
 def video_to_audio(video_file):
     # Save the uploaded video file temporarily
     video_path = "temp_video.mp4"
     with open(video_path, "wb") as f:
         f.write(video_file.getbuffer())
 
-    # Use moviepy to extract audio from the video
-    video = mp.VideoFileClip(video_path)
-    audio = video.audio
+    # Use ffmpeg to extract audio
     audio_path = "extracted_audio.wav"
-    audio.write_audiofile(audio_path)
-
-    # Properly close the video file and audio to release resources
-    video.close()
-    audio.close()
+    command = ["ffmpeg", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "44100", "-ac", "2", audio_path]
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Clean up the temporary video file
     os.remove(video_path)
@@ -99,7 +94,7 @@ if video_file is not None:
     with st.container():
         st.markdown("<div class='video-container'><h4>Uploaded Video</h4></div>", unsafe_allow_html=True)
         st.video(video_file)
-    
+
     st.write("Extracting audio from video...")
 
     # Convert video to audio
